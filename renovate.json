@@ -1,0 +1,59 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "helpers:pinGitHubActionDigests",
+    ":disableDependencyDashboard"
+  ],
+  "schedule": ["before 6am on monday"],
+  "labels": ["dependencies"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Keep the app version in lockstep with the torrential image tag",
+      "managerFilePatterns": ["/^torrential/config\\.yaml$/"],
+      "matchStrings": ["version: \"(?<currentValue>\\d+\\.\\d+\\.\\d+)(?:\\.\\d+)?\""],
+      "depNameTemplate": "ghcr.io/nexxeln/torrential",
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$",
+      "autoReplaceStringTemplate": "version: \"{{{newValue}}}\""
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "GitHub Actions: one grouped PR, merged automatically once CI passes",
+      "matchManagers": ["github-actions"],
+      "groupName": "GitHub Actions",
+      "automerge": true
+    },
+    {
+      "description": "torrential: Dockerfile tag + digest and config.yaml version in one PR",
+      "matchPackageNames": ["ghcr.io/nexxeln/torrential"],
+      "groupName": "torrential",
+      "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$",
+      "prBodyNotes": [
+        "Before merging: add a `## <new version>` section to `torrential/CHANGELOG.md` (the version check fails until you do), and read the torrential release notes for changes to config.yaml, pairing or how it treats requests from a proxy. See RELEASING.md."
+      ]
+    },
+    {
+      "description": "Tailscale, cloudflared and yq: one grouped PR; needs a packaging revision",
+      "matchPackageNames": [
+        "docker.io/tailscale/tailscale",
+        "docker.io/cloudflare/cloudflared",
+        "docker.io/mikefarah/yq"
+      ],
+      "groupName": "Tailscale, cloudflared and yq",
+      "prBodyNotes": [
+        "Before merging: bump `version` in `torrential/config.yaml` to the next packaging revision (the version check names it) and add a CHANGELOG entry. See RELEASING.md."
+      ]
+    },
+    {
+      "matchPackageNames": ["docker.io/tailscale/tailscale"],
+      "versioning": "regex:^v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$"
+    },
+    {
+      "matchPackageNames": ["docker.io/cloudflare/cloudflared", "docker.io/mikefarah/yq"],
+      "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$"
+    }
+  ]
+}

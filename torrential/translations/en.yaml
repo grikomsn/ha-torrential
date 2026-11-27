@@ -1,0 +1,55 @@
+configuration:
+  domain:
+    name: Domain
+    description: >-
+      Public HTTPS hostname, for example tv.example.com (Cloudflare) or
+      torrential.tail1234.ts.net (Tailscale). https:// is added for you.
+      Pairing links use it. Leave empty to use torrential on the home network
+      only.
+  downloads_dir:
+    name: Downloads folder
+    description: >-
+      Where downloads you keep are saved. A folder inside /media or /share.
+      Removed downloads go to a Trash folder inside it.
+  plays_max:
+    name: Space for plays
+    description: >-
+      The most disk space that what you watch may take up, for example 20GiB
+      or 5GiB, or none for no limit. The plays watched longest ago are deleted
+      first.
+  pair_on_start:
+    name: Pairing code at every start
+    description: >-
+      Print a pairing code in the Log tab at every start, to add another phone,
+      computer or TV. While no device is paired, a code is printed anyway.
+  cloudflare_tunnel_token:
+    name: Cloudflare Tunnel token
+    description: >-
+      Token of a remote-managed tunnel from the Cloudflare dashboard. Leave
+      empty to disable. Route your public hostname to http://localhost:47919
+      and set Domain to that hostname.
+  tailscale:
+    name: Tailscale
+    description: Join your tailnet as a separate node and serve torrential there.
+  tailscale_auth_key:
+    name: Tailscale auth key
+    description: >-
+      Optional. Without it, the Log tab shows a login URL on first start.
+      Only needed until the node is logged in.
+  tailscale_hostname:
+    name: Tailscale hostname
+    description: Node name, giving <name>.<tailnet>.ts.net.
+  tailscale_funnel:
+    name: Tailscale Funnel
+    description: >-
+      Also expose torrential to the public internet through Tailscale Funnel.
+      Needs Domain set to the node's ts.net name. Off means tailnet devices
+      only.
+  debug:
+    name: Debug log
+    description: Also show the Tailscale daemon's log in the Log tab.
+  env_vars:
+    name: Extra environment variables
+    description: >-
+      Passed to torrential, cloudflared and Tailscale, for example HTTPS_PROXY,
+      or a variable that an indexer's api_key_env names.

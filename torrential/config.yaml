@@ -1,0 +1,72 @@
+name: torrential
+version: "0.7.0"
+slug: torrential
+description: >-
+  Find films and shows and watch them on your phone, computer or TV while
+  they download, with optional Cloudflare Tunnel and Tailscale Serve/Funnel
+  built in.
+url: https://github.com/grikomsn/ha-torrential/tree/main/torrential
+# Signed multi-arch image published by .github/workflows/release.yaml; the
+# Supervisor pulls the tag matching `version`. See RELEASING.md.
+image: ghcr.io/grikomsn/ha-torrential
+arch:
+  - aarch64
+  - amd64
+startup: application
+boot: auto
+# The upstream image has no init system or S6; Docker's init (tini) reaps the
+# cloudflared and Tailscale helper processes.
+init: true
+# torrential saves the state of its downloads when it is asked to stop.
+timeout: 30
+# torrential needs the host's network: pairing links name the host's own
+# addresses, and finding TVs (SSDP) multicasts on the home network. It
+# listens on port 47919, which can't be changed.
+host_network: true
+# Without the host's UTS namespace the container's hostname would be the app
+# slug, and pairing links would name <slug>.local instead of the host.
+host_uts: true
+webui: "http://[HOST]:[PORT:47919]/"
+# Answers 200 to anyone, paired or not.
+watchdog: "http://[HOST]:[PORT:47919]/.well-known/torrential"
+# Downloads go to /media or /share so other apps and the media browser see
+# them. Everything else torrential keeps (config.yaml, paired devices,
+# what is playing) is in /data, this app's private data folder.
+map:
+  - type: media
+    read_only: false
+  - type: share
+    read_only: false
+# SQLite must not be copied while it is being written to.
+backup: cold
+# Plays are a cache of up to `plays_max`, and ffmpeg is fetched again.
+backup_exclude:
+  - "data/plays/*"
+  - "cache/*"
+  - "run/*"
+  - "tailscale/logs/*"
+options:
+  domain: ""
+  downloads_dir: /media/torrential
+  plays_max: 20GiB
+  pair_on_start: false
+  cloudflare_tunnel_token: ""
+  tailscale: false
+  tailscale_hostname: torrential
+  tailscale_funnel: false
+  debug: false
+  env_vars: []
+schema:
+  domain: str?
+  downloads_dir: match(^/(media|share)/[^/].*$)
+  plays_max: str?
+  pair_on_start: bool
+  cloudflare_tunnel_token: password?
+  tailscale: bool
+  tailscale_auth_key: password?
+  tailscale_hostname: match(^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?$)
+  tailscale_funnel: bool
+  debug: bool
+  env_vars:
+    - name: match(^[A-Za-z_][A-Za-z0-9_]*$)
+      value: str
