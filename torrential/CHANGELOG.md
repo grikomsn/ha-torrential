@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.7.0.1
+
+- New `mdns_hostname` option: an extra name on the home network, such as
+  `couch-potato` for `http://couch-potato.local:47919`, next to Home
+  Assistant's own. Off unless set.
+- The pairing lines in the log name it too.
+
 ## 0.7.0
 
 - First release, based on the official torrential 0.7.0 image, run as a server

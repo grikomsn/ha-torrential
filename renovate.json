@@ -40,7 +40,8 @@
       "matchPackageNames": [
         "docker.io/tailscale/tailscale",
         "docker.io/cloudflare/cloudflared",
-        "docker.io/mikefarah/yq"
+        "docker.io/mikefarah/yq",
+        "docker.io/library/golang"
       ],
       "groupName": "Tailscale, cloudflared and yq",
       "prBodyNotes": [

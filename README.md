@@ -37,7 +37,8 @@ The app's Dockerfile starts from the official `ghcr.io/nexxeln/torrential`
 image, adds the `tailscale`, `cloudflared` and `yq` binaries from their
 official images, and wraps the upstream `torrential engine run --server` with
 [`run.sh`](torrential/rootfs/ha/run.sh), which writes the app's options into
-torrential's `config.yaml`.
+torrential's `config.yaml`. [`mdns-alias`](torrential/mdns-alias/) is this
+repository's own small mDNS responder, for the optional `mdns_hostname`.
 
 torrential has no accounts: a device gets in by pairing with a code that only
 the server can make. [`pair.sh`](torrential/rootfs/ha/pair.sh) prints that

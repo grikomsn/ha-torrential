@@ -22,6 +22,12 @@ configuration:
     description: >-
       Print a pairing code in the Log tab at every start, to add another phone,
       computer or TV. While no device is paired, a code is printed anyway.
+  mdns_hostname:
+    name: Home network name
+    description: >-
+      An extra name on the home network, for example couch-potato for
+      http://couch-potato.local:47919. Home Assistant's own name keeps
+      working. Leave empty to use that one only.
   cloudflare_tunnel_token:
     name: Cloudflare Tunnel token
     description: >-

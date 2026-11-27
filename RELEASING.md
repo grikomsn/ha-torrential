@@ -9,7 +9,7 @@ the image tag the Supervisor pulls, and whether an update is offered.
 ```text
 <torrential tag>[.<revision>]
 0.7.0      torrential 0.7.0
-0.7.0.1    same torrential, first packaging change (scripts, Tailscale, cloudflared, yq, options)
+0.7.0.1    same torrential, first packaging change (scripts, mdns-alias, Tailscale, cloudflared, yq, options)
 0.7.1      next torrential release (revision resets)
 ```
 
@@ -48,7 +48,7 @@ To run it yourself: `docker build -t ha-torrential:dev torrential` and then
 | --- | --- | --- |
 | **GitHub Actions** | Action versions and commit SHAs | Nothing. It merges itself when CI passes. |
 | **torrential** | Dockerfile tag and digest, and `version` in `config.yaml` | Read the [release notes](https://github.com/nexxeln/torrential/releases), add a `## <new version>` CHANGELOG section, then merge. |
-| **Tailscale, cloudflared and yq** | Dockerfile tag and digest | Bump `version` to the next revision (CI names it), add a CHANGELOG section, then merge. |
+| **Tailscale, cloudflared and yq** | Dockerfile tag and digest, including the Go image that builds `mdns-alias` | Bump `version` to the next revision (CI names it), add a CHANGELOG section, then merge. |
 
 The packaging leans on three things in torrential that a release could
 change, so look for them in its release notes:

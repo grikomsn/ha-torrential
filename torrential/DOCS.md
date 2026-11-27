@@ -59,6 +59,7 @@ add or remove devices. To list or remove them, see
 | `downloads_dir` | Where downloads you keep are saved: a folder inside `/media` or `/share`. Default `/media/torrential`. |
 | `plays_max` | The most space that what you watch may take up, such as `20GiB`, or `none`. Default `20GiB`. |
 | `pair_on_start` | Print a pairing code at every start, not only while no device is paired. |
+| `mdns_hostname` | An extra name on the home network, such as `couch-potato` for `http://couch-potato.local:47919`. See [A name of its own](#a-name-of-its-own). |
 | `cloudflare_tunnel_token` | Turns on the built-in Cloudflare Tunnel. |
 | `tailscale`, `tailscale_auth_key`, `tailscale_hostname`, `tailscale_funnel` | Turn on the built-in Tailscale node. |
 | `debug` | Also show the Tailscale daemon's log. |
@@ -186,6 +187,25 @@ pairing links name the host's own addresses. So:
   for anything that passes outside connections to `127.0.0.1` as they are,
   which the Tailscale app for Home Assistant does in userspace networking
   mode.
+
+### A name of its own
+
+Because the app shares the host's network, the only `.local` name on the home
+network is Home Assistant's own, so torrential is at
+`http://homeassistant.local:47919`. Set `mdns_hostname` to, say,
+`couch-potato` and the app also answers for `couch-potato.local`, with the
+host's addresses on the home network. Home Assistant keeps its name, and the
+pairing lines in the log name the new one too.
+
+- The name is announced on the interfaces that have a default route, so not
+  on the Docker networks or Tailscale, and it follows address changes.
+- If another machine already has the name, the app says so in the log and
+  doesn't announce it.
+- It is a name for other devices. On the Home Assistant machine itself, and
+  in other apps, it doesn't resolve.
+- mDNS doesn't cross VLANs or reach over Tailscale or Cloudflare, and some
+  TV browsers don't look up `.local` names at all. The IP address in the log
+  always works.
 
 ## Downloads and disk space
 

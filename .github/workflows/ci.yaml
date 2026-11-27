@@ -16,6 +16,12 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: ShellCheck
         run: shellcheck -s sh torrential/rootfs/ha/*.sh .github/scripts/*.sh
+      - name: mdns-alias
+        working-directory: torrential/mdns-alias
+        run: |
+          test -z "$(gofmt -l .)"
+          go vet ./...
+          go test ./...
       - name: YAML
         run: >-
           yamllint -d '{extends: relaxed, rules: {line-length: disable}}'

@@ -151,8 +151,25 @@ else
   log "Tailscale: disabled"
 fi
 
+# --- mDNS alias (optional) -------------------------------------------------------
+# On the host's network the only .local name is the host's own. This adds one
+# for torrential next to it, without renaming the host.
+mdns_hostname="$(opt mdns_hostname)"
+if [ -n "$mdns_hostname" ]; then
+  case "$mdns_hostname" in
+    *[!a-z0-9-]* | -* | *-) die "'mdns_hostname' must be one name of lowercase letters, digits and hyphens, e.g. couch-potato." ;;
+  esac
+  if [ "$mdns_hostname" = "$(hostname)" ]; then
+    die "'mdns_hostname' is this machine's own name: $mdns_hostname.local works already."
+  fi
+  forever mdns-alias /usr/local/bin/mdns-alias "$mdns_hostname"
+  log "mDNS: enabled, http://$mdns_hostname.local:$PORT on the home network"
+else
+  log "mDNS: disabled"
+fi
+
 # Shows a pairing code in the Log tab once the engine is up.
-PAIR_ON_START="$(opt pair_on_start)" /ha/pair.sh &
+PAIR_ON_START="$(opt pair_on_start)" MDNS_HOSTNAME="$mdns_hostname" /ha/pair.sh &
 
 log "Downloads: $downloads (removed downloads go to $downloads/Trash)"
 if [ -n "$url" ]; then

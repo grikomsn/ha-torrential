@@ -38,6 +38,9 @@ lan="$(field lan_address)"
 if [ -n "$lan" ] && [ "$lan" != "$(field address)" ]; then
   log "  or    $lan  on the home network"
 fi
+if [ -n "${MDNS_HOSTNAME:-}" ]; then
+  log "  or    http://$MDNS_HOSTNAME.local:47919  on the home network"
+fi
 if [ "${PAIR_ON_START:-false}" = "true" ]; then
   log "Turn 'pair_on_start' off again once your devices are paired."
 fi

@@ -49,7 +49,7 @@ expect() {
 
 cleanup
 docker run --rm -i -v "$name:/data" --entrypoint sh "$image" -c 'cat > /data/options.json' <<EOF
-{"domain":"$host","downloads_dir":"/media/torrential","plays_max":"5GiB","pair_on_start":false,"cloudflare_tunnel_token":"","tailscale":false,"tailscale_hostname":"torrential","tailscale_funnel":false,"debug":false,"env_vars":[]}
+{"domain":"$host","downloads_dir":"/media/torrential","plays_max":"5GiB","pair_on_start":false,"mdns_hostname":"smoke-alias","cloudflare_tunnel_token":"","tailscale":false,"tailscale_hostname":"torrential","tailscale_funnel":false,"debug":false,"env_vars":[]}
 EOF
 docker run -d --init --name "$name" -v "$name:/data" "$image" >/dev/null
 
@@ -77,6 +77,9 @@ until code="$(docker logs "$name" 2>&1 | sed -n "s#.*https://$host/pair\#\([0-9]
   sleep 2
 done
 echo "ok: the log shows a pairing link for https://$host"
+docker logs "$name" 2>&1 | grep -q '^\[mdns\] announcing smoke-alias.local as ' || fail "smoke-alias.local was not announced"
+docker logs "$name" 2>&1 | grep -q '^\[pairing\]   or    http://smoke-alias.local:47919 ' || fail "the pairing lines don't name smoke-alias.local"
+echo "ok: mdns_hostname is announced and named in the pairing lines"
 
 body="{\"code\":\"$code\"}"
 answer="$(send "POST /api/pair HTTP/1.1\r\nHost: $host\r\n$proxied\r\nOrigin: https://$host\r\nContent-Type: application/json\r\nContent-Length: ${#body}\r\nConnection: close\r\n\r\n$body")"
